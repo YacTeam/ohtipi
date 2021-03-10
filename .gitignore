@@ -4,3 +4,4 @@ dist_electron
 dist-electron
 .env
 .DS_Store
+developeridapplication.p12
