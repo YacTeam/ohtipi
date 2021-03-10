@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ohtipi</title>
+    <link href="./assets/tailwind.min.css" rel="stylesheet" />
+    <style>
+        .overlay {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            height: 100px;
+            width: 260px;
+            transition: all 500ms ease;
+        }
+
+        .overlay-inner {
+            background: #0062ff;
+            width: 100%;
+            height: 100%;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body class="flex w-full h-full relative select-none">
+    <div id="app" class="overlay m-auto w-full h-screen flex p-2" :style="show ? 'opacity: 1' : 'opacity: 0'">
+        <div class="overlay-inner flex">
+            <div class="flex justify-start w-auto h-auto m-auto">
+                <div class="my-auto w-auto flex">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="my-auto w-auto flex flex-col ml-2">
+                    <p class="my-auto text-xl text-white">{{ line_1 }}</p>
+                    <p class="my-auto text-l text-white opacity-75">{{ line_2 }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="./assets/vue.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                line_1: "",
+                line_2: "Copied to Clipboard",
+                show: false,
+                timeout: null
+            },
+            methods: {
+                handleIncomingOTP(event, str) {
+                    if (!str || str.length < 2) return;
+
+                    this.line_1 = str;
+                    this.show = true;
+
+                    if (this.timeout) clearTimeout(this.timeout);
+                    this.timeout = setTimeout(() => {
+                        this.show = false;
+                    }, 5000)
+                }
+            },
+            mounted() {
+                this.show = false;
+                ipcRenderer.on("otpCode", this.handleIncomingOTP);
+            },
+            beforeDestroy() {
+                ipcRenderer.on("otpCode", null)
+            }
+        })
+    </script>
+</body>
+
+</html>
