@@ -17,13 +17,14 @@ const AutoLaunch = require('auto-launch');
 const path = require("path");
 const permissions = require("node-mac-permissions");
 const imessage = require("osa-imessage");
-const otpRegex = new RegExp("[0-9a-zA-Z]*[0-9]+[0-9a-zA-Z]*");
 const singleInstanceLock = app.requestSingleInstanceLock();
 const copyIconNativeImage = nativeImage.createFromPath(path.join(app.getAppPath(), `./assets/tray/CopyTemplate.png`));
 const trayIconPath = path.join(app.getAppPath(), `./assets/tray/IconTemplate.png`);
+const parse = require("parse-otp-message");
 const autoLaunchHelper = new AutoLaunch({
     name: 'Ohtipi'
 });
+const config = require("./config.js");
 
 let autoStartEnabled = false;
 let onboardingWindow;
@@ -32,6 +33,7 @@ let tray;
 let hasAcceptableSystemPermissions = false;
 let otpHistory = [];
 let autoUpdaterState = {};
+let iMessageConnectionAttempts = 0;
 
 const getAutoStartState = () => {
     autoLaunchHelper.isEnabled()
@@ -49,7 +51,7 @@ const getAutoStartState = () => {
 const setOverlayWindowPosition = () => {
     const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
     if (overlayWindow && display) {
-        overlayWindow.setPosition(10, display.workAreaSize.height - 80)
+        overlayWindow.setPosition(config.overlay.offset.x, display.workAreaSize.height - config.overlay.offset.y)
     }
 };
 
@@ -79,40 +81,37 @@ const copyToClipboard = (text) => {
     clipboard.writeText(text, "selection");
 }
 
+const formatServiceName = (serviceName) => {
+    if (!serviceName || serviceName.length < 1) return "";
+    return serviceName.charAt(0).toUpperCase() + serviceName.slice(1);
+}
+
 const buildOTPHistorySubMenu = () => {
-    const generateLabel = (otp) => {
-        return `${otp}`
+    const generateLabel = (otpObject) => {
+        return config.text.history_item_template
+            .replace("<service>", otpObject.service)
+            .replace("<code>", otpObject.code);
+    }
+
+    const generateHistoryItem = (otpObject) => {
+        return {
+            label: generateLabel(otpObject),
+            enabled: true,
+            icon: copyIconNativeImage,
+            click: () => {
+                copyToClipboard(otpObject.code)
+            }
+        }
     }
 
     return [
         otpHistory[0] ? {
-            label: "Recent",
+            label: config.text.recent_label,
             enabled: false,
         } : null,
-        otpHistory[0] ? {
-            label: generateLabel(otpHistory[0]),
-            enabled: true,
-            icon: copyIconNativeImage,
-            click: () => {
-                copyToClipboard(otpHistory[0])
-            }
-        } : null,
-        otpHistory[1] ? {
-            label: otpHistory[1],
-            enabled: true,
-            icon: copyIconNativeImage,
-            click: () => {
-                copyToClipboard(otpHistory[1])
-            }
-        } : null,
-        otpHistory[2] ? {
-            label: otpHistory[2],
-            enabled: true,
-            icon: copyIconNativeImage,
-            click: () => {
-                copyToClipboard(otpHistory[2])
-            }
-        } : null,
+        otpHistory[0] ? generateHistoryItem(otpHistory[0]) : null,
+        otpHistory[1] ? generateHistoryItem(otpHistory[1]) : null,
+        otpHistory[2] ? generateHistoryItem(otpHistory[2]) : null,
         {
             type: "separator"
         },
@@ -124,7 +123,7 @@ const buildContextMenu = (opts = {
 }) => {
 
     let template = [{
-            label: hasAcceptableSystemPermissions ? `🟢 Connected to iMessage` : `⚠️ Setup Ohtipi`,
+            label: hasAcceptableSystemPermissions ? config.text.connected_string : config.text.error_string,
             enabled: !hasAcceptableSystemPermissions,
             click: () => {
                 if (!onboardingWindow) {
@@ -139,7 +138,7 @@ const buildContextMenu = (opts = {
         },
         ...buildOTPHistorySubMenu(),
         {
-            label: "Open at Login",
+            label: config.text.open_at_login_label,
             type: "checkbox",
             checked: autoStartEnabled,
             click: () => {
@@ -147,7 +146,7 @@ const buildContextMenu = (opts = {
             }
         },
         {
-            label: "Quit Ohtipi",
+            label: config.text.quit_label,
             enabled: true,
             click: () => {
                 app.quit();
@@ -157,21 +156,21 @@ const buildContextMenu = (opts = {
 
     if (autoUpdaterState && autoUpdaterState.status && autoUpdaterState.status === "update-available") {
         template.unshift({
-            label: "⏳ Update Available",
+            label: config.text.update_available,
             enabled: false,
         })
     }
 
     if (autoUpdaterState && autoUpdaterState.status && autoUpdaterState.status === "download-progress") {
         template.unshift({
-            label: "⏳ Downloading Update: " + autoUpdaterState.percent + "%",
+            label: config.text.download_progress + " " + autoUpdaterState.percent + "%",
             enabled: false,
         })
     }
 
     if (autoUpdaterState && autoUpdaterState.status && autoUpdaterState.status === "update-downloaded") {
         template.unshift({
-            label: "⌛️ Update Downloaded, Restart App",
+            label: config.text.update_downloaded,
             enabled: true,
             click: () => {
                 autoUpdater.quitAndInstall();
@@ -285,7 +284,6 @@ const createIpcHandlers = () => {
 const createTray = () => {
     if (tray) tray = null;
     tray = new Tray(trayIconPath);
-    tray.setToolTip("Ohtipi");
     updateTrayContextMenu();
 }
 
@@ -295,28 +293,54 @@ const updateTrayContextMenu = () => {
     }));
 }
 
-const handleIncomingOTP = (attr) => {
-    const otpString = attr.otpRaw.toString();
-    otpHistory.unshift(otpString);
+const handleIncomingOTP = (otpObject) => {
+    otpHistory.unshift(otpObject);
     setOverlayWindowPosition();
-    copyToClipboard(otpString);
+    copyToClipboard(otpObject.code);
     updateTrayContextMenu();
 }
 
-const handleIncomingiMessage = (msg) => {
+const parseOTP = (messageString) => {
+    return new Promise((res, rej) => {
+        if (!messageString || messageString.length < 3) return;
+        const result = parse(messageString);
+        if (result && result.code && result.service) {
+            return res(result);
+        }
+        return rej(false)
+    })
+}
+
+const handleIncomingiMessage = async (msg) => {
     if (msg.fromMe) return;
-    const hasOTP = msg.text.match(otpRegex);
-    if (hasOTP) {
+    const body = msg.text;
+    if (!body) return;
+
+    parseOTP(body).then((parsed) => {
         handleIncomingOTP({
-            otpRaw: hasOTP[0].trim(),
+            code: parsed.code,
+            service: formatServiceName(parsed.service),
             originalMessage: msg.text,
             originalSender: msg.handle
         });
-    }
+    }).catch(() => {
+        return;
+    })
+}
+
+const handleiMessageError = (e) => {
+    setTimeout(() => {
+        if (iMessageConnectionAttempts > config.imessage.max_connection_attempts_per_session) return;
+        iMessageConnectionAttempts++;
+        listenToiMessage();
+    }, config.imessage.connection_wait_ms);
 }
 
 const listenToiMessage = () => {
-    imessage.listen().on("message", handleIncomingiMessage);
+    imessage
+        .listen()
+        .on("message", handleIncomingiMessage)
+        .on("error", handleiMessageError)
 }
 
 const setAutoUpdaterUiState = (state) => {
