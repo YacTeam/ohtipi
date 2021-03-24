@@ -311,10 +311,25 @@ const parseOTP = (messageString) => {
     })
 }
 
+const isBodyValidPerCustomBlacklist = (body) => {
+    // basic filtering
+    if (!body || !body.length) return false;
+    if (body.length < 5) return false;
+
+    // currency filtering
+    if (body.includes("$")) return false;
+    if (body.includes("€")) return false;
+    if (body.includes("₹")) return false;
+    if (body.includes("¥")) return false;
+
+    return true;
+}
+
 const handleIncomingiMessage = async (msg) => {
     if (msg.fromMe) return;
     const body = msg.text;
-    if (!body) return;
+
+    if (!isBodyValidPerCustomBlacklist(body)) return;
 
     parseOTP(body).then((parsed) => {
         handleIncomingOTP({
