@@ -8,8 +8,7 @@ const {
     ipcMain,
     nativeImage,
     clipboard,
-    screen,
-    powerMonitor
+    screen
 } = require("electron");
 const {
     autoUpdater
@@ -432,12 +431,6 @@ const initAutoUpdater = () => {
     }, 60000 * 5);
 }
 
-const initPowerMonitor = () => {
-    powerMonitor.on("resume", () => {
-        listenToiMessage();
-    })
-}
-
 if (!singleInstanceLock) {
     app.quit();
 }
@@ -446,7 +439,6 @@ app.on("ready", function () {
     createIpcHandlers();
     createTray();
     initAutoUpdater();
-    initPowerMonitor();
     obtainFullDiskAccess()
         .then(() => {
             getAutoStartState();
