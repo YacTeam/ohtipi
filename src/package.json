@@ -2,7 +2,7 @@
   "name": "ohtipi",
   "productName": "Ohtipi",
   "description": "iMessage OTP",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "author": "Alec Armbruster <alec@yac.com>",
   "copyright": "© 2021, Yac Inc.",
   "homepage": "http://ohtipi.com",
@@ -50,9 +50,9 @@
     "express": "^4.17.1",
     "node-mac-permissions": "^2.2.0",
     "osa-imessage": "^2.4.2",
-    "parse-otp-message": "^1.0.2",
     "sqlite3": "^4.0.9",
-    "ws": "^7.4.4"
+    "ws": "^7.4.4",
+    "stopwords": "^0.0.9"
   },
   "devDependencies": {
     "electron": "11.0.4",

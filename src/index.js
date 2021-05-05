@@ -20,7 +20,7 @@ const imessage = require("osa-imessage");
 const singleInstanceLock = app.requestSingleInstanceLock();
 const copyIconNativeImage = nativeImage.createFromPath(path.join(app.getAppPath(), `./assets/tray/CopyTemplate.png`));
 const trayIconPath = path.join(app.getAppPath(), `./assets/tray/IconTemplate.png`);
-const parse = require("parse-otp-message");
+const parse = require("./assets/libs/parse-otp-message");
 const autoLaunchHelper = new AutoLaunch({
     name: 'Ohtipi'
 });
