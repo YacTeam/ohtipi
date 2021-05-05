@@ -8,7 +8,8 @@ const {
     ipcMain,
     nativeImage,
     clipboard,
-    screen
+    screen,
+    dialog
 } = require("electron");
 const {
     autoUpdater
@@ -86,6 +87,19 @@ const formatServiceName = (serviceName) => {
     return serviceName.charAt(0).toUpperCase() + serviceName.slice(1);
 }
 
+const triggerAboutDialog = () => {
+    const options = {
+        type: 'info',
+        buttons: ['Dismiss'],
+        defaultId: 0,
+        title: 'About Ohtipi',
+        message: 'Ohtipi v.' + require("./package.json").version,
+        detail: 'https://ohtipi.com',
+    };
+
+    dialog.showMessageBox(null, options, () => {});
+}
+
 const buildOTPHistorySubMenu = () => {
     const generateLabel = (otpObject) => {
         return config.text.history_item_template
@@ -148,7 +162,9 @@ const buildContextMenu = (opts = {
         {
             label: config.text.quit_label,
             enabled: true,
-            click: () => {
+            click: (menuItem, browserWindow, event) => {
+                if (event.metaKey)
+                    return triggerAboutDialog();
                 app.quit();
             }
         },
