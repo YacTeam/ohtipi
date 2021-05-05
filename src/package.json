@@ -47,7 +47,6 @@
     "auto-launch": "^5.0.5",
     "body-parser": "^1.19.0",
     "electron-updater": "^4.3.8",
-    "express": "^4.17.1",
     "node-mac-permissions": "^2.2.0",
     "osa-imessage": "^2.4.2",
     "sqlite3": "^4.0.9",
