@@ -17,7 +17,7 @@ const {
 const AutoLaunch = require('auto-launch');
 const path = require("path");
 const permissions = require("node-mac-permissions");
-const imessage = require("./assets/libs/osa-imessage");
+const imessage = require("./assets/libs/imessage");
 const singleInstanceLock = app.requestSingleInstanceLock();
 const copyIconNativeImage = nativeImage.createFromPath(path.join(app.getAppPath(), `./assets/tray/CopyTemplate.png`));
 const trayIconPath = path.join(app.getAppPath(), `./assets/tray/IconTemplate.png`);
