@@ -196,7 +196,7 @@ async function getRecentChats(limit = 10) {
     return chats
 }
 
-async function getRecentMessages(limit = 10) {
+async function getRecentMessages() {
     const db = await messagesDb.open()
 
     // offset is in seconds
@@ -215,7 +215,7 @@ async function getRecentMessages(limit = 10) {
     FROM message
     LEFT OUTER JOIN handle ON message.handle_id = handle.ROWID
     WHERE date > ${last}
-    LIMIT ${limit};
+    LIMIT 6;
     `
 
     const chats = await db.all(query)

@@ -102,9 +102,10 @@ const triggerAboutDialog = () => {
 
 const resyncMessages = () => {
     otpHistory = [];
-    imessage.getRecentMessages(50).then(chats => {
+    imessage.getRecentMessages().then(chats => {
         chats.forEach(chat => {
-            handleIncomingiMessage(chat, {
+            handleIncomingiMessage({
+                ...chat,
                 resync: true
             });
         });
@@ -165,7 +166,7 @@ const buildContextMenu = (opts = {
         ...buildOTPHistorySubMenu(),
         {
             label: config.text.resync,
-            enabled: true,
+            enabled: hasAcceptableSystemPermissions,
             click: () => {
                 resyncMessages();
             }
@@ -367,7 +368,7 @@ const isBodyValidPerCustomBlacklist = (body) => {
     return true;
 }
 
-const handleIncomingiMessage = async (msg, resync) => {
+const handleIncomingiMessage = async (msg) => {
     if (msg.fromMe) return;
     const body = msg.text;
 
@@ -379,7 +380,7 @@ const handleIncomingiMessage = async (msg, resync) => {
             service: formatServiceName(parsed.service),
             originalMessage: msg.text,
             originalSender: msg.handle,
-            resync
+            resync: msg.resync
         });
     }).catch(() => {
         return;
