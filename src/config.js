@@ -19,6 +19,7 @@ module.exports = {
         open_at_login_label: "Open at Login",
         quit_label: "Quit Ohtipi",
         history_item_template: "<code> - <service>",
-        overlay_subtitle: "Copied to Clipboard"
+        overlay_subtitle: "Copied to Clipboard",
+        resync: "Sync Recent Messages"
     }
 }

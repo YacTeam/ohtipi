@@ -17,7 +17,7 @@ const {
 const AutoLaunch = require('auto-launch');
 const path = require("path");
 const permissions = require("node-mac-permissions");
-const imessage = require("osa-imessage");
+const imessage = require("./assets/libs/osa-imessage");
 const singleInstanceLock = app.requestSingleInstanceLock();
 const copyIconNativeImage = nativeImage.createFromPath(path.join(app.getAppPath(), `./assets/tray/CopyTemplate.png`));
 const trayIconPath = path.join(app.getAppPath(), `./assets/tray/IconTemplate.png`);
@@ -100,6 +100,17 @@ const triggerAboutDialog = () => {
     dialog.showMessageBox(null, options, () => {});
 }
 
+const resyncMessages = () => {
+    otpHistory = [];
+    imessage.getRecentMessages(50).then(chats => {
+        chats.forEach(chat => {
+            handleIncomingiMessage(chat, {
+                resync: true
+            });
+        });
+    })
+}
+
 const buildOTPHistorySubMenu = () => {
     const generateLabel = (otpObject) => {
         return config.text.history_item_template
@@ -130,6 +141,7 @@ const buildOTPHistorySubMenu = () => {
             type: "separator"
         },
     ].filter(x => x !== null)
+
 }
 
 const buildContextMenu = (opts = {
@@ -151,6 +163,13 @@ const buildContextMenu = (opts = {
             type: "separator"
         },
         ...buildOTPHistorySubMenu(),
+        {
+            label: config.text.resync,
+            enabled: true,
+            click: () => {
+                resyncMessages();
+            }
+        },
         {
             label: config.text.open_at_login_label,
             type: "checkbox",
@@ -310,9 +329,16 @@ const updateTrayContextMenu = () => {
 }
 
 const handleIncomingOTP = (otpObject) => {
-    otpHistory.unshift(otpObject);
-    setOverlayWindowPosition();
-    copyToClipboard(otpObject.code);
+    otpHistory.unshift({
+        ...otpObject,
+        resync: false
+    });
+
+    if (!otpObject.resync) {
+        setOverlayWindowPosition();
+        copyToClipboard(otpObject.code);
+    }
+
     updateTrayContextMenu();
 }
 
@@ -341,7 +367,7 @@ const isBodyValidPerCustomBlacklist = (body) => {
     return true;
 }
 
-const handleIncomingiMessage = async (msg) => {
+const handleIncomingiMessage = async (msg, resync) => {
     if (msg.fromMe) return;
     const body = msg.text;
 
@@ -352,7 +378,8 @@ const handleIncomingiMessage = async (msg) => {
             code: parsed.code,
             service: formatServiceName(parsed.service),
             originalMessage: msg.text,
-            originalSender: msg.handle
+            originalSender: msg.handle,
+            resync
         });
     }).catch(() => {
         return;
