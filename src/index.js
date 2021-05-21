@@ -9,7 +9,8 @@ const {
     nativeImage,
     clipboard,
     screen,
-    dialog
+    dialog,
+    globalShortcut
 } = require("electron");
 const {
     autoUpdater
@@ -35,6 +36,7 @@ let hasAcceptableSystemPermissions = false;
 let otpHistory = [];
 let autoUpdaterState = {};
 let iMessageConnectionAttempts = 0;
+let trayTitleTimeout = null;
 
 const getAutoStartState = () => {
     autoLaunchHelper.isEnabled()
@@ -92,21 +94,27 @@ const triggerAboutDialog = () => {
         type: 'info',
         buttons: ['Dismiss'],
         defaultId: 0,
-        title: 'About Ohtipi',
+        title: config.text.credit_window_title,
         message: 'Ohtipi v.' + require("./package.json").version,
-        detail: 'https://ohtipi.com',
+        detail: config.text.credits,
     };
 
     dialog.showMessageBox(null, options, () => {});
 }
 
-const resyncMessages = () => {
-    otpHistory = [];
+const resyncMessages = (options = {
+    silently: false
+}) => {
+    tray.closeContextMenu();
+
     imessage.getRecentMessages().then(chats => {
-        chats.forEach(chat => {
+        otpHistory = [];
+        temporarilySetTrayTitle("Synced!");
+
+        chats.forEach((chat, chatIndex) => {
             handleIncomingiMessage({
                 ...chat,
-                resync: true
+                resync: !options.silently ? chatIndex !== chats.length - 1 : true
             });
         });
     })
@@ -152,6 +160,7 @@ const buildContextMenu = (opts = {
     let template = [{
             label: hasAcceptableSystemPermissions ? config.text.connected_string : config.text.error_string,
             enabled: !hasAcceptableSystemPermissions,
+            type: "normal",
             click: () => {
                 if (!onboardingWindow) {
                     createOnboardingWindow();
@@ -167,6 +176,9 @@ const buildContextMenu = (opts = {
         {
             label: config.text.resync,
             enabled: hasAcceptableSystemPermissions,
+            accelerator: config.shortcuts.resync_and_copy,
+            registerAccelerator: false,
+            toolTip: config.text.resync_and_copy_tooltip,
             click: () => {
                 resyncMessages();
             }
@@ -175,6 +187,7 @@ const buildContextMenu = (opts = {
             label: config.text.open_at_login_label,
             type: "checkbox",
             checked: autoStartEnabled,
+            toolTip: config.text.open_at_login_tooltip,
             click: () => {
                 toggleAppAutoStart();
             }
@@ -182,8 +195,11 @@ const buildContextMenu = (opts = {
         {
             label: config.text.quit_label,
             enabled: true,
+            accelerator: 'CommandOrControl+Q',
+            acceleratorWorksWhenHidden: false,
+            registerAccelerator: false,
             click: (menuItem, browserWindow, event) => {
-                if (event.metaKey)
+                if (event.shiftKey)
                     return triggerAboutDialog();
                 app.quit();
             }
@@ -317,6 +333,19 @@ const createIpcHandlers = () => {
     })
 }
 
+const createGlobalShortcut = () => {
+    app.whenReady().then(() => {
+        globalShortcut.register(config.shortcuts.resync_and_copy, () => {
+            resyncMessages();
+        })
+    })
+
+    app.on('will-quit', () => {
+        globalShortcut.unregister(config.shortcuts.resync_and_copy)
+        globalShortcut.unregisterAll()
+    })
+}
+
 const createTray = () => {
     if (tray) tray = null;
     tray = new Tray(trayIconPath);
@@ -328,6 +357,17 @@ const updateTrayContextMenu = () => {
         status: hasAcceptableSystemPermissions
     }));
 }
+
+const temporarilySetTrayTitle = (text) => {
+    const set = (t) => tray.setTitle(t.toString());
+    if (trayTitleTimeout) clearTimeout(trayTitleTimeout);
+    if (text === null) return set("")
+    set(text);
+    trayTitleTimeout = setTimeout(() => {
+        set("");
+    }, config.timeouts.tray_title_ms)
+}
+
 
 const handleIncomingOTP = (otpObject) => {
     otpHistory.unshift({
@@ -480,6 +520,7 @@ if (!singleInstanceLock) {
 }
 
 app.on("ready", function () {
+    createGlobalShortcut();
     createIpcHandlers();
     createTray();
     initAutoUpdater();
@@ -494,3 +535,8 @@ app.on("ready", function () {
             createOnboardingWindow();
         })
 });
+
+app.on('will-quit', () => {
+    tray.destroy();
+    tray = null;
+})

@@ -31,6 +31,7 @@
             width: 183px;
             height: 48px;
             background-color: #0361ff;
+            border-radius: 4px;
         }
 
         .rotate {
@@ -89,6 +90,20 @@
         .flash-avoid {
             animation: fadein 1s;
         }
+
+        .demo-easein {
+            animation: demo-easein 4s ease-out 1;
+        }
+
+        @keyframes demo-easein {
+            0% {
+                transform: scale(1.1)
+            }
+
+            100% {
+                transform: scale(1.0)
+            }
+        }
     </style>
 </head>
 
@@ -118,13 +133,13 @@
                     d="M70.002,82.5018a2.5012,2.5012,0,0,1-2.2383-1.3828l-30-60a2.5,2.5,0,1,1,4.4726-2.2363l30,60a2.5015,2.5015,0,0,1-2.2343,3.6191Z" />
             </svg>
 
-            <div class="flex fixed right-0 top-0 example-screen z-50 shadow-lg rounded-lg overflow-hidden">
-                <img class="object-contain" src="./assets/onboarding/example.png" />
+            <div class="flex fixed right-0 top-0 example-screen z-50 shadow-lg rounded-lg overflow-hidden demo-easein">
+                <img draggable="false" class="object-contain" src="./assets/onboarding/example.png" />
             </div>
 
             <div class="h-auto my-auto z-10 ml-8 text-pane" v-if="step == 0">
                 <div class="mb-6">
-                    <img style="height: 28px" class="w-auto" src="./assets/onboarding/logo.png">
+                    <img draggable="false" style="height: 28px" class="w-auto" src="./assets/onboarding/logo.png">
                 </div>
                 <h1 class="mb-2 text-2xl font-bold">
                     Welcome to Ohtipi
@@ -147,7 +162,7 @@
 
             <div class="w-1/2 h-auto my-auto z-10 ml-8" v-if="step == 1">
                 <div class="mb-6">
-                    <img style="height: 28px" class="w-auto" src="./assets/onboarding/logo.png">
+                    <img draggable="false" style="height: 28px" class="w-auto" src="./assets/onboarding/logo.png">
                 </div>
                 <h1 class="mb-2 text-2xl font-bold">
                     We need your permission
@@ -155,19 +170,18 @@
                 <p class="mb-2 text-sm font-thin">
                     Ohtipi will work smoothly if you<br>allow us these permissions:
                 </p>
-                <div :style="`${hasFullDiskAccessPermission ? 'opacity: 1' : 'opacity: 0.75'}`"
-                    class="mb-2 text-sm font-thin flex justify-start">
+                <div :class="`my-6 text-sm font-thin flex justify-start ${!hasFullDiskAccessPermission ? 'cursor-pointer hover:opacity-50 opacity-100' : 'opacity-50'}`"
+                    @click="setPermissions">
                     <div
-                        :class="!hasFullDiskAccessPermission ? 'my-auto mr-2 w-3 h-3 border border-black' : 'my-auto mr-2 w-3 h-3 bg-black border border-black'">
+                        :class="!hasFullDiskAccessPermission ? 'rounded my-auto mr-2 w-3 h-3 border border-red-500 bg-red-500 opacity-25' : 'rounded my-auto mr-2 w-3 h-3 bg-green-500 border border-green-500'">
                     </div>
-                    <div class="my-auto">Full Disk Access</div>
+                    <div class="my-auto">Full Disk Access <span v-if="!hasFullDiskAccessPermission">&rarr;</span></div>
                 </div>
 
-                <div v-if="!hasFullDiskAccessPermission" @click="setPermissions"
-                    class="hover:opacity-75 flex button text-white text-sm cursor-pointer my-4" style="width: 150px"
-                    id="permissions-button">
+                <div v-if="!hasFullDiskAccessPermission" class="flex button text-white text-sm my-4 opacity-25"
+                    style="width: 150px" id="permissions-button">
                     <div class="m-auto truncate w-auto">
-                        Set Permissions
+                        Continue
                     </div>
                 </div>
                 <div v-else @click="nextStep"
@@ -204,17 +218,36 @@
 
             <div class="w-1/2 h-auto my-auto z-10 ml-8" v-if="step == 2">
                 <div class="mb-6">
-                    <img style="height: 28px" class="w-auto" src="./assets/onboarding/logo.png">
+                    <img draggable="false" style="height: 28px" class="w-auto" src="./assets/onboarding/logo.png">
                 </div>
                 <h1 class="mb-2 text-2xl font-bold">
                     Setup is done
                 </h1>
-                <p class="mb-2 text-sm font-thin">
+                <p class="mb-2 text-sm font-thin mt-2">
                     Keep an eye out for Ohtipi in your Menu Bar
                 </p>
 
-                <div class="mb-6 w-3/4 z-0">
-                    <img src="./assets/onboarding/example-menubar.png" />
+                <div class="mb-6 w-3/4 z-0 rounded overflow-hidden">
+                    <img draggable="false" src="./assets/onboarding/example-menubar.png" class="object-fill" />
+                </div>
+
+                <div class="h-auto mb-6 border border-gray-300 rounded-lg p-3" style="width: 287px">
+                    <div class="w-auto flex justify-start">
+                        <div style="background: rgba(0,0,0,0.05); color: rgba(0,0,0,0.8)"
+                            class="inline-block w-8 flex h-6 text-xs font-bold uppercase rounded">
+                            <div class="m-auto">
+                                Tip
+                            </div>
+                        </div>
+                        <div class="font-medium my-auto ml-3 text-sm opacity-75">
+                            ⌘ + Shift + E
+                        </div>
+                    </div>
+                    <div class="mt-3 w-full z-0 text-sm font-thin leading-5">
+                        Sometimes iMessage likes to sleep on the job. If OhTipi ever misses a message, use <span
+                            class="font-medium text-xs p-1">⌘ + Shift + E</span>
+                        to sync recent messages and copy the latest code to your clipboard.
+                    </div>
                 </div>
 
                 <div @click="restartApp" class="hover:opacity-75 flex button text-white text-sm cursor-pointer my-4"
