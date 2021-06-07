@@ -4,61 +4,105 @@ const authWords = require('./lib/auth-words')
 const knownServices = require('./lib/known-services')
 const servicePatterns = require('./lib/service-patterns')
 const stopwords = require('./lib/stopwords')
+const interventions = require("./lib/interventions")
+
+let debug = false
 
 module.exports = (message) => {
   const service = inferService(message)
   const s = message.toLowerCase()
   let code
 
-  const m = message.match(/\b(g-\d{4,8})\b/i)
-  if (m) return {
-    code: m[1],
-    service: 'google'
+  if (debug) {
+    console.log({
+      step: 0,
+      service: service,
+      string: s,
+    })
   }
+
+  const handler = (obj) => {
+    if (debug) {
+      console.log({
+        step: 1,
+        matchedOnLevel: obj.level,
+        matchedObject: obj
+      })
+    }
+
+    delete obj.level; // it's only included so we can debug
+    const secondPassResult = interventions(obj, message);
+
+    if (debug) {
+      console.log({
+        step: 2,
+        secondPassResult: secondPassResult,
+        original: {
+          obj,
+          message
+        }
+      })
+    }
+
+    return secondPassResult;
+  }
+
+  const m = message.match(/\b(g-\d{4,8})\b/i)
+  if (m) return handler({
+    code: m[1],
+    service: 'google',
+    level: 0
+  })
 
   code = validateAuthCode(s, /\b(\d{4,8})\b/)
-  if (code) return {
+  if (code) return handler({
     code,
-    service
-  }
+    service,
+    level: 1
+  })
 
   code = validateAuthCode(s, /\b(\d{3}[- ]\d{3})\b/)
-  if (code) return {
+  if (code) return handler({
     code,
-    service
-  }
+    service,
+    level: 2
+  })
 
   code = validateAuthCode(s, /\b(\d{4,8})\b/g, {
     isGlobal: true
   })
-  if (code) return {
+  if (code) return handler({
     code,
-    service
-  }
+    service,
+    level: 3
+  })
 
   code = validateAuthCode(s, /\b(\d{3}[- ]\d{3})\b/g, {
     isGlobal: true
   })
-  if (code) return {
+  if (code) return handler({
     code,
-    service
-  }
+    service,
+    level: 4
+  })
 
   code = validateAuthCode(message, /\b([\dA-Z]{6,8})\b/g, {
     isGlobal: true,
     cleanCode: (code) => code.replace(/[^\dA-Z]/g, '').trim()
   })
-  if (code) return {
+  if (code) return handler({
     code,
-    service
-  }
+    service,
+    level: 5
+  })
 
   // no auth code found
   if (service) {
-    return {
+    return handler({
       code: undefined,
-      service
-    }
+      service,
+      level: 6
+    })
   }
 }
 
@@ -87,7 +131,6 @@ function validateAuthCode(message, pattern, opts = {}) {
 
 function validateAuthCodeMatch(message, index, code, cleanCode) {
   if (!code || !code.length) return
-  
   // check for false-positives like phone numbers
   if (index > 0) {
     const prev = message.charAt(index - 1)
