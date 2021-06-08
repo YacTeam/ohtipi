@@ -140,7 +140,7 @@ function validateAuthCodeMatch(message, index, code, cleanCode) {
   if (index + code.length < message.length) {
     const next = message.charAt(index + code.length)
     // make sure next character is whitespace or ending grammar
-    if (next && [/\s/g, ",", ".", "!"].indexOf(next) < 1) {
+    if (next && [/\s/g, ",", ".", "!", " "].indexOf(next) < 1) {
       return;
     };
   }
