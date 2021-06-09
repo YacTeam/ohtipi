@@ -1,4 +1,5 @@
 require('dotenv').config();
+const config = require("../config.js");
 
 const {
     notarize
@@ -16,7 +17,7 @@ exports.default = async function notarizing(context) {
     const appName = context.packager.appInfo.productFilename;
 
     return await notarize({
-        appBundleId: 'com.ohtipi.app',
+        appBundleId: config.build.setApp ? 'com.ohtipi.app-setapp' : 'com.ohtipi.app',
         appPath: `${appOutDir}/${appName}.app`,
         appleId: process.env.APPLEID,
         appleIdPassword: process.env.APPLEIDPASS,

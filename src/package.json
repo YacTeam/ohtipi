@@ -8,49 +8,23 @@
   "homepage": "http://ohtipi.com",
   "license": "MIT",
   "main": "index.js",
-  "build": {
-    "copyright": "© 2021, Yac Inc.",
-    "appId": "com.ohtipi.app",
-    "icon": "./assets/dock/dock-icon.icns",
-    "files": [
-      "./**/*",
-      "./**/**/*",
-      "node_modules/**/*",
-      "package.json"
-    ],
-    "mac": {
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false,
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist",
-      "type": "distribution",
-      "darkModeSupport": true,
-      "publish": {
-        "provider": "s3",
-        "bucket": "ohtipi-release",
-        "region": "us-east-1"
-      }
-    },
-    "dmg": {
-      "sign": false
-    },
-    "afterSign": "build/notarize.js"
-  },
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "test": "ava assets/libs/parse-otp-message/test",
-    "release": "source .env; electron-builder",
+    "release": "source .env; electron-builder --config ./build/electron.config.js",
+    "build:setapp": "./build/build-setapp.sh; source .env; electron-builder --config ./build/electron.config.js -p never",
     "dev": "electron ."
   },
   "dependencies": {
     "@electron/remote": "^1.0.4",
     "auto-launch": "^5.0.5",
     "body-parser": "^1.19.0",
+    "cross-env": "^7.0.3",
     "electron-updater": "^4.3.8",
-    "node-mac-permissions": "^2.2.0",
-    "osa-imessage": "^2.4.2",
     "macos-version": "^4.0.0",
+    "node-mac-permissions": "^2.2.0",
     "one-liner": "^1.0.3",
+    "osa-imessage": "^2.4.2",
     "osa2": "^0.0.0",
     "sqlite": "^2.8.0",
     "stopwords": "^0.0.9"
@@ -59,6 +33,7 @@
     "ava": "^0.25.0",
     "electron": "11.0.4",
     "electron-builder": "22.7.0",
-    "electron-notarize": "^1.0.0"
+    "electron-notarize": "^1.0.0",
+    "electron-rebuild": "^2.3.5"
   }
 }

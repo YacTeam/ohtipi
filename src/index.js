@@ -28,6 +28,12 @@ const autoLaunchHelper = new AutoLaunch({
 });
 const config = require("./config.js");
 
+// setapp integration (set in config.js)
+const {
+    Setapp
+} = require("./setapp.js");
+Setapp.init();
+
 let autoStartEnabled = false;
 let onboardingWindow;
 let overlayWindow;
@@ -468,6 +474,9 @@ const ensureSafeQuitAndInstall = () => {
 }
 
 const initAutoUpdater = () => {
+    // disable autoupdater if setapp is active
+    if (Setapp.isActive) return;
+
     autoUpdater.on("update-available", (e) => {
         setAutoUpdaterUiState({
             status: "update-available",
