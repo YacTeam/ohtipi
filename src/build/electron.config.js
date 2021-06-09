@@ -14,7 +14,7 @@ module.exports = {
         "setapp-nodejs-wrapper/**/**/**/*"
     ],
     mac: {
-        hardenedRuntime: false,
+        hardenedRuntime: true,
         gatekeeperAssess: false,
         entitlements: "build/entitlements.mac.plist",
         entitlementsInherit: "build/entitlements.mac.plist",
