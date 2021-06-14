@@ -1,11 +1,7 @@
-const fs = require('fs')
 const osa = require('osa2')
 const ol = require('one-liner')
 const assert = require('assert')
 const macosVersion = require('macos-version')
-const versions = require('./macos_versions')
-const currentVersion = macosVersion()
-
 const messagesDb = require('./lib/messages-db.js')
 
 function warn(str) {
@@ -167,9 +163,10 @@ function listen() {
         }
     }
 
-    if (bail) return
+    if (bail) {
+        return
+    }
     check()
-
     return emitter
 }
 
@@ -192,7 +189,7 @@ async function getRecentChats(limit = 10) {
         LIMIT ${limit};
     `
 
-    const chats = await db.all(query)
+    const chats = await db.all(query);
     return chats
 }
 
@@ -218,8 +215,20 @@ async function getRecentMessages() {
     LIMIT 6;
     `
 
-    const chats = await db.all(query)
-    return chats
+    const chats = await db.all(query);
+    let formattedChats = [];
+    chats.forEach(msg => {
+        formattedChats.push({
+            guid: msg.guid,
+            text: msg.text,
+            handle: msg.handle,
+            group: msg.cache_roomnames,
+            fromMe: !!msg.is_from_me,
+            date: fromAppleTime(msg.date),
+            dateRead: fromAppleTime(msg.date_read),
+        })
+    });
+    return formattedChats
 }
 
 module.exports = {

@@ -27,6 +27,7 @@ const autoLaunchHelper = new AutoLaunch({
     name: 'Ohtipi'
 });
 const config = require("./config.js");
+const isDevelopment = process && process.env && process.env.NODE_ENV === 'true';
 
 // setapp integration (set in config.js)
 const {
@@ -43,6 +44,10 @@ let otpHistory = [];
 let autoUpdaterState = {};
 let iMessageConnectionAttempts = 0;
 let trayTitleTimeout = null;
+
+const handleCriticalError = (err) => {
+    console.log(err)
+}
 
 const getAutoStartState = () => {
     autoLaunchHelper.isEnabled()
@@ -246,6 +251,7 @@ const createOnboardingWindow = () => {
         resizable: false,
         show: false,
         webPreferences: {
+            contextIsolation: false,
             enableRemoteModule: true,
             preload: path.join(__dirname, "./preload.js"),
         }
@@ -275,6 +281,7 @@ const createOverlayWindow = async () => {
         hasShadow: false,
         frame: false,
         webPreferences: {
+            contextIsolation: false,
             enableRemoteModule: true,
             preload: path.join(__dirname, "./preload.js"),
         }
@@ -428,12 +435,13 @@ const handleIncomingiMessage = async (msg) => {
             originalSender: msg.handle,
             resync: msg.resync
         });
-    }).catch(() => {
+    }).catch((e) => {
         return;
     })
 }
 
 const handleiMessageError = (e) => {
+    console.error("handleiMessageError: ", e);
     setTimeout(() => {
         if (iMessageConnectionAttempts > config.imessage.max_connection_attempts_per_session) return;
         iMessageConnectionAttempts++;
@@ -476,6 +484,7 @@ const ensureSafeQuitAndInstall = () => {
 const initAutoUpdater = () => {
     // disable autoupdater if setapp is active
     if (Setapp.isActive) return;
+    if (isDevelopment) return;
 
     autoUpdater.on("update-available", (e) => {
         setAutoUpdaterUiState({
@@ -540,8 +549,15 @@ app.on("ready", function () {
             setOverlayWindowPosition();
             listenToiMessage();
         })
-        .catch(() => {
-            createOnboardingWindow();
+        .catch((err) => {
+            if (!err) {
+                // show users window to help grant ohtipi privileges
+                return createOnboardingWindow();
+            }
+            // if we've reached this line, then
+            // we're catching something non-full-disk-access related
+            // and should be treated as app-breaking error
+            handleCriticalError(err);
         })
 });
 
@@ -549,3 +565,7 @@ app.on('will-quit', () => {
     tray.destroy();
     tray = null;
 })
+
+process.on('unhandledRejection', err => {
+    handleCriticalError(err)
+});

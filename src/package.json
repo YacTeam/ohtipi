@@ -13,7 +13,7 @@
     "test": "ava assets/libs/parse-otp-message/test",
     "release": "source .env; electron-builder --config ./build/electron.config.js",
     "build:setapp": "./build/build-setapp.sh; source .env; electron-builder --config ./build/electron.config.js -p never",
-    "dev": "electron ."
+    "dev": "NODE_ENV=true electron ."
   },
   "dependencies": {
     "@electron/remote": "^1.0.4",
