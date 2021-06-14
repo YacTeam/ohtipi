@@ -1,6 +1,8 @@
 'use strict'
 
 module.exports = [
+  'verizon',
+  'kotak bank',
   'weibo',
   'wechat',
   'whatsapp',
@@ -84,5 +86,5 @@ module.exports = [
   'imo',
   'kayak',
   'grab',
-  'qq'
+  'qq',
 ]
