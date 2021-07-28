@@ -14,6 +14,7 @@ module.exports = {
     ],
     npmRebuild: false,
     forceCodeSigning: true,
+    afterSign: "build/notarize.js",
     mac: {
         hardenedRuntime: true,
         gatekeeperAssess: false,
@@ -33,5 +34,4 @@ module.exports = {
             region: "us-east-1"
         } : undefined
     },
-    afterSign: "build/notarize.js"
 }
