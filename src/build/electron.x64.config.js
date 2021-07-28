@@ -9,8 +9,12 @@ module.exports = {
         "./**/**/*",
         "node_modules/**/*",
         "package.json",
-        "binaries/*.node"
+        // include extra native modules if setapp
+        config.build.setApp ? "binaries/*.node" : undefined,
     ],
+    npmRebuild: false,
+    forceCodeSigning: true,
+    afterSign: "build/notarize.js",
     mac: {
         hardenedRuntime: true,
         gatekeeperAssess: false,
@@ -18,14 +22,16 @@ module.exports = {
         entitlementsInherit: "build/entitlements.mac.plist",
         type: "distribution",
         darkModeSupport: true,
+        artifactName: "${productName}-${arch}-${version}.${ext}",
+        target: config.build.setApp ? [{
+            target: "zip",
+            arch: ["x64"]
+        }] : undefined,
+        // don't publish if setapp
         publish: !config.build.setApp ? {
             provider: "s3",
             bucket: "ohtipi-release",
             region: "us-east-1"
         } : undefined
     },
-    dmg: {
-        sign: false
-    },
-    afterSign: "build/notarize.js"
 }

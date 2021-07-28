@@ -1,0 +1,19 @@
+{
+  "name": "setapp-lib-nodejs",
+  "version": "0.1.0",
+  "description": "Setapp lib node.js wrapper",
+  "private": true,
+  "dependencies": {
+    "bindings": "^1.2.1",
+    "electron-rebuild": "^2.3.5",
+    "nan": "^2.4.0"
+  },
+  "scripts": {
+    "build": "node-gyp rebuild --target=12.20.0 --arch=x64 --dist-url=https://electronjs.org/headers; ./node_modules/.bin/electron-rebuild",
+    "rebuild": "./node_modules/.bin/electron-rebuild --arch=arm64; ./node_modules/.bin/electron-rebuild --arch=x64;"
+  },
+  "gypfile": true,
+  "devDependencies": {
+    "node-gyp": "^3.4.0"
+  }
+}

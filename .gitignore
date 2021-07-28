@@ -5,3 +5,4 @@ dist-electron
 .env
 .DS_Store
 developeridapplication.p12
+package-lock.json
