@@ -9,9 +9,7 @@ module.exports = {
         "./**/**/*",
         "node_modules/**/*",
         "package.json",
-        "setapp-nodejs-wrapper/**/*",
-        "setapp-nodejs-wrapper/**/**/*",
-        "setapp-nodejs-wrapper/**/**/**/*"
+        "binaries/*.node"
     ],
     mac: {
         hardenedRuntime: true,
