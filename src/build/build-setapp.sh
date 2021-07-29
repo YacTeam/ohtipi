@@ -8,16 +8,9 @@ npm install --unsafe-perm;
 echo "Building Setapp wrapper!";
 npm install --unsafe-perm --prefix ./binaries/setapp-nodejs-wrapper;
 npm run rebuild --unsafe-perm --prefix ./binaries/setapp-nodejs-wrapper;
-
-# copy binaries out
-echo "Copying ARM64 build of Setapp into ./src/binaries folder";
-cp -R ./binaries/setapp-nodejs-wrapper/bin/darwin-arm64-85/setapp-nodejs-wrapper.node ./binaries/setapp-nodejs-wrapper-arm64.node;
-echo "Verifying ARM64 build of Setapp";
-lipo -i ./binaries/setapp-nodejs-wrapper-arm64.node;
-echo "Copying x64 build of Setapp into ./src/binaries folder";
-cp -R ./binaries/setapp-nodejs-wrapper/bin/darwin-x64-85/setapp-nodejs-wrapper.node ./binaries/setapp-nodejs-wrapper-x64.node;
-echo "Verifying x64 build of Setapp";
-lipo -i ./binaries/setapp-nodejs-wrapper-x64.node;
+# copy binaries out, create setapp fat
+lipo ./binaries/setapp-nodejs-wrapper/bin/darwin-arm64-85/setapp-nodejs-wrapper.node ./binaries/setapp-nodejs-wrapper/bin/darwin-x64-85/setapp-nodejs-wrapper.node -create -output ./binaries/setapp-nodejs-wrapper.node;
+lipo -i ./binaries/setapp-nodejs-wrapper.node;
 echo "Finished building Setapp wrapper!";
 
 # arm64 steps (apple silicon)

@@ -15,21 +15,9 @@ const Setapp = new class Setapp {
     if (!this.isActive) {
       return
     }
-    // this is a hack, but it works.
-    // attempt loading intel setapp module
-    try {
-      this.setapp = require('./binaries/setapp-nodejs-wrapper-x64.node')
-    } catch (e) {
-      console.error("Intel Setapp native module couldn't load, reason: ", e)
-    }
-    // attempt loading apple silicon setapp module
-    if (!this.setapp) {
-      try {
-        this.setapp = require('./binaries/setapp-nodejs-wrapper-arm64.node')
-      } catch (e) {
-        console.error("Apple Silicon Setapp native module couldn't load, reason: ", e)
-      }
-    }
+
+    this.setapp = require('./binaries/setapp-nodejs-wrapper.node')
+
   }
   reportUsageEvent(name = null) {
     if (!this.isActive || !this.setapp || !name) {
