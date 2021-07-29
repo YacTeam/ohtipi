@@ -36,8 +36,10 @@ npm run release;
 
 Open `config.js` and set `{ build.setApp }` to `true`.
 
+Make sure all `.node` native modules are compiled against the correct version of Node, Electron, etc. This project currently uses `sqlite3`, `node-mac-permissions` and `setapp-nodejs-wrapper`. The build script can be seen in `./build/build-setapp.sh`. `lipo` is used to cross-compile `.node` modules for both `arm64` and `x64`.
+
 ```shell
 npm run build:setapp;
 ```
 
-Distribution can now be found in `/dist`.
+Distribution can now be found in `/dist/mac-universal`.
