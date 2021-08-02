@@ -43,3 +43,9 @@ npm run build:setapp;
 ```
 
 Distribution can now be found in `/dist/mac-universal`.
+
+You may need to re-codesign the Universal app bundle:
+
+```shell
+codesign -fv --deep -s CBA[..................] ./Yac.app
+```
