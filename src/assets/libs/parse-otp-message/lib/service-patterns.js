@@ -121,5 +121,7 @@ module.exports = [
 
   /\b([\w\d]{3,64})\s+code\b/,
   /\b([\w\d]{3,64})\s+number\b/,
-  /\b([\w\d]{3,64})\s+pin\b/
+  /\b([\w\d]{3,64})\s+pin\b/,
+
+  /【([\u4e00-\u9fa5\d\w]+)】/
 ]

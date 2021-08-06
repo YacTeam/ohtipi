@@ -140,9 +140,9 @@ function validateAuthCodeMatch(message, index, code, cleanCode) {
   if (index + code.length < message.length) {
     const next = message.charAt(index + code.length)
     // make sure next character is whitespace or ending grammar
-    if (next && [/\s/g, ",", ".", "!", " "].indexOf(next) < 1) {
+    if (next && [/\s/g, ",", ".", "!", " ", "，", "。"].indexOf(next) < 1) {
       return;
-    };
+    }
   }
 
   return cleanCode(code)
@@ -156,7 +156,7 @@ function inferService(message) {
     const match = s.match(pattern)
     const service = match && match[1] && match[1].trim()
 
-    if (service && /\w+/.test(service) && !authWords.has(service)) {
+    if (service && service !== "" && !authWords.has(service)) {
       // check for some false-positive cases
       if (stopwords.has(service)) {
         if (message.substr(match.index, service.length) !== service.toUpperCase()) {
