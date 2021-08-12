@@ -1,6 +1,7 @@
 'use strict'
 
 module.exports = [
+  'segment',
   'verizon',
   'kotak bank',
   'weibo',
