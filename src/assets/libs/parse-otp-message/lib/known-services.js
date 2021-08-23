@@ -44,6 +44,7 @@ module.exports = [
   'yandex',
   'uc browser',
   'qq browser',
+  'qmenu',
   'sogou',
   'bbm',
   'ebay',
