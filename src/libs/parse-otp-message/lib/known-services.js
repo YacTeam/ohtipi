@@ -89,4 +89,6 @@ module.exports = [
   'kayak',
   'grab',
   'qq',
+  'moonpay',
+  'robinhood'
 ]
