@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
-    "test": "ava assets/libs/parse-otp-message/test",
+    "test": "ava libs/parse-otp-message/test",
     "release": "source .env; electron-builder --config ./build/electron.config.js",
     "build-test-mac": "source .env; electron-builder --config ./build/electron.config.js --mac --x64 -p never",
     "build:setapp": "./build/build-setapp.sh",

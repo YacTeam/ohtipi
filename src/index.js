@@ -1,5 +1,3 @@
-// ohtipi
-
 const {
     app,
     Tray,
@@ -18,16 +16,18 @@ const {
 const AutoLaunch = require('auto-launch');
 const path = require("path");
 const permissions = require("node-mac-permissions");
-const imessage = require("./assets/libs/imessage");
+
+const imessage = require("./libs/imessage");
+const parse = require("./libs/parse-otp-message");
+const config = require("./config.js");
+
 const singleInstanceLock = app.requestSingleInstanceLock();
 const copyIconNativeImage = nativeImage.createFromPath(path.join(app.getAppPath(), `./assets/tray/CopyTemplate.png`));
 const trayIconPath = path.join(app.getAppPath(), `./assets/tray/IconTemplate.png`);
-const parse = require("./assets/libs/parse-otp-message");
+const isDevelopment = process && process.env && process.env.NODE_ENV === 'true';
 const autoLaunchHelper = new AutoLaunch({
     name: 'Ohtipi'
 });
-const config = require("./config.js");
-const isDevelopment = process && process.env && process.env.NODE_ENV === 'true';
 
 // setapp integration (set in config.js)
 const {
@@ -110,7 +110,7 @@ const triggerAboutDialog = () => {
         detail: config.text.credits,
     };
 
-    dialog.showMessageBox(null, options, () => {});
+    dialog.showMessageBox(null, options, () => { });
 }
 
 const resyncMessages = (options = {
@@ -169,52 +169,52 @@ const buildContextMenu = (opts = {
 }) => {
 
     let template = [{
-            label: hasAcceptableSystemPermissions ? config.text.connected_string : config.text.error_string,
-            enabled: !hasAcceptableSystemPermissions,
-            type: "normal",
-            click: () => {
-                if (!onboardingWindow) {
-                    createOnboardingWindow();
-                } else {
-                    onboardingWindow.show();
-                }
+        label: hasAcceptableSystemPermissions ? config.text.connected_string : config.text.error_string,
+        enabled: !hasAcceptableSystemPermissions,
+        type: "normal",
+        click: () => {
+            if (!onboardingWindow) {
+                createOnboardingWindow();
+            } else {
+                onboardingWindow.show();
             }
-        },
-        {
-            type: "separator"
-        },
-        ...buildOTPHistorySubMenu(),
-        {
-            label: config.text.resync,
-            enabled: hasAcceptableSystemPermissions,
-            accelerator: config.shortcuts.resync_and_copy,
-            registerAccelerator: false,
-            toolTip: config.text.resync_and_copy_tooltip,
-            click: () => {
-                resyncMessages();
-            }
-        },
-        {
-            label: config.text.open_at_login_label,
-            type: "checkbox",
-            checked: autoStartEnabled,
-            toolTip: config.text.open_at_login_tooltip,
-            click: () => {
-                toggleAppAutoStart();
-            }
-        },
-        {
-            label: config.text.quit_label,
-            enabled: true,
-            accelerator: 'CommandOrControl+Q',
-            acceleratorWorksWhenHidden: false,
-            registerAccelerator: false,
-            click: (menuItem, browserWindow, event) => {
-                if (event.shiftKey)
-                    return triggerAboutDialog();
-                app.quit();
-            }
-        },
+        }
+    },
+    {
+        type: "separator"
+    },
+    ...buildOTPHistorySubMenu(),
+    {
+        label: config.text.resync,
+        enabled: hasAcceptableSystemPermissions,
+        accelerator: config.shortcuts.resync_and_copy,
+        registerAccelerator: false,
+        toolTip: config.text.resync_and_copy_tooltip,
+        click: () => {
+            resyncMessages();
+        }
+    },
+    {
+        label: config.text.open_at_login_label,
+        type: "checkbox",
+        checked: autoStartEnabled,
+        toolTip: config.text.open_at_login_tooltip,
+        click: () => {
+            toggleAppAutoStart();
+        }
+    },
+    {
+        label: config.text.quit_label,
+        enabled: true,
+        accelerator: 'CommandOrControl+Q',
+        acceleratorWorksWhenHidden: false,
+        registerAccelerator: false,
+        click: (menuItem, browserWindow, event) => {
+            if (event.shiftKey)
+                return triggerAboutDialog();
+            app.quit();
+        }
+    },
     ]
 
     if (autoUpdaterState && autoUpdaterState.status && autoUpdaterState.status === "update-available") {

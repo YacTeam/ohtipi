@@ -1,6 +1,6 @@
 'use strict'
 
-const rules = require("../../../../custom-filters")
+const rules = require("./custom-filters")
 
 module.exports = (passingResult, originalString) => {
     let result = passingResult;
