@@ -1,3 +1,5 @@
+const config = require("../../../config.js")
+
 module.exports = [
     // user-requested data transformations
     // to standardize behavior across vendors
@@ -38,6 +40,44 @@ module.exports = [
             return {
                 code: messageText.split("G-")[1].substring(0, 6),
                 service: "google"
+            }
+        }
+    },
+
+    // generics (use "unknown" as service name)
+    {
+        notes: "Generic catch 1 (Epic Games, possibly others)",
+        example: "Your verification code is 732825",
+        ifServiceMatches: "undefined",
+        ensure(messageText) {
+            try {
+                return messageText && messageText.startsWith("Your verification code is") && !Number.isNaN(messageText.split(" ")[4])
+            } catch (e) {
+                return false;
+            }
+        },
+        handler(messageText) {
+            return {
+                code: messageText.split(" ")[4],
+                service: config.text.unknown_string
+            }
+        }
+    },
+    {
+        notes: "Generic catch 2",
+        example: "Your security code: 274934. Valid for 1 minutes.",
+        ifServiceMatches: "undefined",
+        ensure(messageText) {
+            try {
+                return messageText && messageText.startsWith("Your security code:") && !Number.isNaN(messageText.split(" ")[3].replace(".", ""))
+            } catch (e) {
+                return false;
+            }
+        },
+        handler(messageText) {
+            return {
+                code: messageText.split(" ")[3].replace(".", ""),
+                service: config.text.unknown_string
             }
         }
     },

@@ -1,4 +1,8 @@
 module.exports = {
+    dev: {
+        // logs otp results to console
+        debug: false
+    },
     build: {
         setApp: false
     },
@@ -19,6 +23,7 @@ module.exports = {
         tray_title_ms: 800,
     },
     text: {
+        unknown_string: "Unknown",
         connected_string: "🟢 Connected to iMessage",
         error_string: "⚠️ Setup Ohtipi",
         update_available: "⏳ Update Available",

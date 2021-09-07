@@ -1,12 +1,11 @@
 'use strict'
 
+const debug = require("../../config.js").dev.debug
 const authWords = require('./lib/auth-words')
 const knownServices = require('./lib/known-services')
 const servicePatterns = require('./lib/service-patterns')
 const stopwords = require('./lib/stopwords')
 const interventions = require("./lib/interventions")
-
-let debug = false
 
 module.exports = (message) => {
   const service = inferService(message)
@@ -109,7 +108,7 @@ module.exports = (message) => {
 function validateAuthCode(message, pattern, opts = {}) {
   const {
     isGlobal = false,
-      cleanCode = (code) => code.replace(/[^\d]/g, '').trim()
+    cleanCode = (code) => code.replace(/[^\d]/g, '').trim()
   } = opts
   const match = message.match(pattern)
 
