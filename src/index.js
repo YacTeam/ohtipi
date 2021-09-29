@@ -97,7 +97,15 @@ const copyToClipboard = (text) => {
 
 const formatServiceName = (serviceName) => {
     if (!serviceName || serviceName.length < 1) return "";
-    return serviceName.charAt(0).toUpperCase() + serviceName.slice(1);
+    function capitalizeTheFirstLetterOfEachWord(words) {
+        var separateWord = words.toLowerCase().split(' ');
+        for (var i = 0; i < separateWord.length; i++) {
+            separateWord[i] = separateWord[i].charAt(0).toUpperCase() +
+                separateWord[i].substring(1);
+        }
+        return separateWord.join(' ');
+    }
+    return capitalizeTheFirstLetterOfEachWord(serviceName);
 }
 
 const triggerAboutDialog = () => {

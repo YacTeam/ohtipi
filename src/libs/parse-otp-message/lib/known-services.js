@@ -90,5 +90,8 @@ module.exports = [
   'grab',
   'qq',
   'moonpay',
-  'robinhood'
+  'robinhood',
+  'ao retail',
+  'cater allen',
+  'apple pay'
 ]
