@@ -1,6 +1,9 @@
 'use strict'
 
 module.exports = [
+  'paypal',
+  'venmo',
+  'cash',
   'segment',
   'verizon',
   'kotak bank',
