@@ -81,4 +81,47 @@ module.exports = [
             }
         }
     },
+
+    // misc. unknown user reported
+
+    // unknown
+    {
+        notes: "Portal Verification",
+        example: "Your portal verification code is : jh7112 Msg&Data rates may apply. Reply STOP to opt-out",
+        ifServiceMatches: "undefined",
+        ensure(messageText) {
+            try {
+                return messageText.includes("portal verification") && messageText.split(" ").length > 5 && messageText.split(" ")[6] && messageText.split(" ")[6].length === 6
+            } catch (e) {
+                return false;
+            }
+        },
+        handler(messageText) {
+            return {
+                code: messageText.split(" ")[6],
+                service: config.text.unknown_string
+            }
+        }
+    },
+
+    // cater allen
+    {
+        notes: "Cater Allen's complex OTP",
+        example: "OTP to MAKE A NEW PAYMENT of GBP 9.94 to 560027 & 27613445. Call us if this wasn't you. NEVER share this code, not even with Cater Allen staff 699486",
+        ifServiceMatches: "cater allen",
+        ensure(messageText) {
+            try {
+                if (!Number.isInteger(Number(messageText.split(" ")[messageText.split(" ").length - 1]))) return false;
+                return messageText.includes("Cater Allen staff") && messageText.includes("OTP to MAKE A NEW PAYMENT") && Number.isInteger(Number(messageText.split(" ")[messageText.split(" ").length - 1]))
+            } catch (e) {
+                return false;
+            }
+        },
+        handler(messageText) {
+            return {
+                code: messageText.split(" ")[messageText.split(" ").length - 1],
+                service: "Cater Allen"
+            }
+        }
+    },
 ]
