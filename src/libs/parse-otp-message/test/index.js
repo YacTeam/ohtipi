@@ -476,6 +476,20 @@ const testCases = [
       service: 'islide'
     }
   },
+  {
+    message: `【华为云】您的验证码为： 097143（10分钟内有效），为了保证您的账户安全，请勿向任何人提供此验证码。感谢使用华为云服务！`,
+    result: {
+      code: '097143',
+      service: '华为云'
+    }
+  },
+  {
+    message: `【哔哩哔哩】546054短信登录验证码，5分钟内有效，请勿泄露。`,
+    result: {
+      code: '546054',
+      service: '哔哩哔哩'
+    }
+  },
 ]
 
 testCases.forEach((testCase) => {
