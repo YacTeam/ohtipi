@@ -1,6 +1,8 @@
 'use strict'
 
 module.exports = [
+  'dropboxing',
+  'wise.com',
   'paypal',
   'venmo',
   'cash',
