@@ -18,7 +18,7 @@ module.exports = {
         entitlementsInherit: "build/entitlements.mac.plist",
         type: "distribution",
         darkModeSupport: true,
-        publish: !config.build.setApp ? {
+        publish: !config.build.setApp && !config.build.universal ? {
             provider: "s3",
             bucket: "ohtipi-release",
             region: "us-east-1"

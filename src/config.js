@@ -4,7 +4,8 @@ module.exports = {
         debug: false
     },
     build: {
-        setApp: false
+        setApp: false,
+        universal: false
     },
     shortcuts: {
         resync_and_copy: "CommandOrControl+Shift+E"

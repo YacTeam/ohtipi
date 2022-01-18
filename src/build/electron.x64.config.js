@@ -10,7 +10,7 @@ module.exports = {
         "node_modules/**/*",
         "package.json",
         // include extra native modules if setapp
-        config.build.setApp ? "binaries/*.node" : undefined,
+        config.build.setApp || config.build.universal ? "binaries/*.node" : undefined,
     ],
     npmRebuild: false,
     forceCodeSigning: true,
@@ -23,12 +23,12 @@ module.exports = {
         type: "distribution",
         darkModeSupport: true,
         artifactName: "${productName}-${arch}-${version}.${ext}",
-        target: config.build.setApp ? [{
+        target: [{
             target: "zip",
             arch: ["x64"]
-        }] : undefined,
+        }],
         // don't publish if setapp
-        publish: !config.build.setApp ? {
+        publish: !config.build.setApp && !config.build.universal ? {
             provider: "s3",
             bucket: "ohtipi-release",
             region: "us-east-1"
