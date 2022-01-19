@@ -40,25 +40,6 @@ npm run install;
 npm run release;
 ```
 
-### Universal Mac App release
-
-Open `config.js` and set `{ build.universal }` to `true`.
-
-Make sure all `.node` native modules are compiled against the correct version of Node, Electron, etc. This project currently uses `sqlite3` and `node-mac-permissions`. The build script can be seen in `./build/build-universal.sh`. `lipo` is used to cross-compile `.node` modules for both `arm64` and `x64`.
-
-```shell
-npm run build:mac-universal;
-```
-
-Distribution can now be found in `/dist/mac-universal`.
-
-💡 Note: You may need to re-codesign the Universal app bundle:
-
-```shell
-codesign -fv --deep -s CBA[..................] ./dist/mac-universal/Ohtipi.app
-```
-
-
 ### Setapp release
 
 Open `config.js` and set `{ build.setApp }` to `true`.

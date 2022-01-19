@@ -4,15 +4,15 @@
   "description": "iMessage OTP",
   "version": "1.0.20",
   "author": "Alec Armbruster <alec@yac.com>",
-  "copyright": "© 2021, Yac Inc.",
+  "copyright": "© 2022, Yac Inc.",
   "homepage": "http://ohtipi.com",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
+    "dev": "NODE_ENV=true electron .",
     "test": "ava libs/parse-otp-message/test",
     "release": "source .env; electron-builder --config ./build/electron.config.js",
-    "build-test-mac": "source .env; electron-builder --config ./build/electron.config.js --mac --x64 -p never",
     "build:setapp": "./build/build-setapp.sh",
     "build:mac-universal": "./build/build-universal.sh",
     "build:setapp-legacy": "electron-builder --config ./build/electron.config.js -p never",
@@ -20,8 +20,7 @@
     "build-setapp-x64": "electron-builder --config ./build/electron.x64.config.js --mac --x64 -p never",
     "build-universal": "node ./build/build-universal.js",
     "rebuild-arm64": "./node_modules/.bin/electron-rebuild --arch=arm64",
-    "rebuild-x64": "./node_modules/.bin/electron-rebuild --arch=x64",
-    "dev": "NODE_ENV=true electron ."
+    "rebuild-x64": "./node_modules/.bin/electron-rebuild --arch=x64"
   },
   "dependencies": {
     "@electron/remote": "^1.0.4",
@@ -40,7 +39,7 @@
   "devDependencies": {
     "ava": "^0.25.0",
     "electron": "11.2.1",
-    "electron-builder": "^22.10.4",
+    "electron-builder": "^22.11.9",
     "electron-notarize": "^1.0.0",
     "electron-rebuild": "^2.3.5"
   },
