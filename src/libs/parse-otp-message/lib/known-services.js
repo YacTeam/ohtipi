@@ -1,6 +1,8 @@
 'use strict'
 
 module.exports = [
+  'td ameritrade',
+  'id.me',
   'bofa',
   'dropboxing',
   'wise.com',
