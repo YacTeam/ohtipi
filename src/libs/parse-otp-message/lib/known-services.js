@@ -1,6 +1,7 @@
 'use strict'
 
 module.exports = [
+  'bofa',
   'dropboxing',
   'wise.com',
   'paypal',
