@@ -90,9 +90,13 @@ const toggleAppAutoStart = () => {
         })
 }
 
+const removeSymbolsFromString = (str) => {
+    return str.replace(/[^a-zA-Z0-9]/g, '');
+}
+
 const copyToClipboard = (text) => {
     if (overlayWindow) overlayWindow.webContents.send("otpCode", text)
-    clipboard.writeText(text, "selection");
+    clipboard.writeText(removeSymbolsFromString(text), "selection");
 }
 
 const formatServiceName = (serviceName) => {
