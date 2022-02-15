@@ -7,7 +7,8 @@ const trickyStrings = [
     "Verizon Msg: Verizon won’t call you for this code. The authorization code you requested for sign in is 779065. Please use this code to complete your request.",
     "验证码：805281，用于华为帐号登录。转给他人将导致华为帐号被盗和个人信息泄露，谨防诈骗。【华为】",
     "【微信支付】验证码为940816，用于商户平台安全验证，5分钟内有效。若非本人操作，请忽略此消息。",
-    "【iSlide】验证码927134，您正在登录iSlide，若非本人操作，请勿泄露。"
+    "【iSlide】验证码927134，您正在登录iSlide，若非本人操作，请勿泄露。",
+    "<#>BofA: DO NOT share this Sign In code. We will NEVER call you or text you for it. Code 123456. Reply HELP if you didn't request it."
 ]
 
 const test = () => {
