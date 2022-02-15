@@ -37,6 +37,8 @@ module.exports = {
         history_item_template: "<code> - <service>",
         overlay_subtitle: "Copied to Clipboard",
         resync: "Resync && Copy", // needs to escape ampersand with second ampersand (not a typo here)
+        disable_shortcuts: "Keyboard Shortcuts",
+        disable_shortcuts_tooltip: "Disable keyboard shortcuts if Ohtipi uses the same keyboard shortcuts as another app",
         resync_and_copy_tooltip: "Sometimes iMessage likes to sleep on the job. If OhTipi ever misses a message, use this option to sync recent messages and copy the latest code to your clipboard",
         nothing_to_sync: "Nothing to sync...",
         sync_success: "Copied!",

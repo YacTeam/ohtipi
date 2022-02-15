@@ -29,6 +29,10 @@ const autoLaunchHelper = new AutoLaunch({
     name: 'Ohtipi'
 });
 
+// user preferences store
+const Store = require('electron-store');
+const prefStore = new Store();
+
 // setapp integration (set in config.js)
 const {
     Setapp
@@ -197,23 +201,47 @@ const buildContextMenu = (opts = {
     },
     ...buildOTPHistorySubMenu(),
     {
-        label: config.text.resync,
-        enabled: hasAcceptableSystemPermissions,
-        accelerator: config.shortcuts.resync_and_copy,
-        registerAccelerator: false,
-        toolTip: config.text.resync_and_copy_tooltip,
-        click: () => {
-            resyncMessages();
-        }
-    },
-    {
-        label: config.text.open_at_login_label,
-        type: "checkbox",
-        checked: autoStartEnabled,
-        toolTip: config.text.open_at_login_tooltip,
-        click: () => {
-            toggleAppAutoStart();
-        }
+        submenu: [
+            {
+                label: config.text.resync,
+                enabled: hasAcceptableSystemPermissions,
+                accelerator: prefStore.get('disable-shortcuts') ? undefined : config.shortcuts.resync_and_copy,
+                registerAccelerator: false,
+                toolTip: config.text.resync_and_copy_tooltip,
+                click: () => {
+                    resyncMessages();
+                }
+            },
+            {
+                label: config.text.disable_shortcuts,
+                toolTip: config.text.disable_shortcuts_tooltip,
+                type: "checkbox",
+                checked: !prefStore.get('disable-shortcuts'),
+                click: () => {
+                    if (prefStore.get('disable-shortcuts')) {
+                        prefStore.delete('disable-shortcuts')
+                        createGlobalShortcut()
+                    } else {
+                        prefStore.set('disable-shortcuts', true)
+                        uncreateGlobalShortcut()
+                    }
+                    updateTrayContextMenu()
+                }
+            },
+
+            {
+                label: config.text.open_at_login_label,
+                type: "checkbox",
+                checked: autoStartEnabled,
+                toolTip: config.text.open_at_login_tooltip,
+                click: () => {
+                    toggleAppAutoStart();
+                }
+            },
+
+        ],
+        label: "Settings",
+
     },
     {
         label: config.text.quit_label,
@@ -359,6 +387,8 @@ const createIpcHandlers = () => {
 }
 
 const createGlobalShortcut = () => {
+    if (prefStore.get('disable-shortcuts')) return;
+
     app.whenReady().then(() => {
         globalShortcut.register(config.shortcuts.resync_and_copy, () => {
             resyncMessages();
@@ -369,6 +399,11 @@ const createGlobalShortcut = () => {
         globalShortcut.unregister(config.shortcuts.resync_and_copy)
         globalShortcut.unregisterAll()
     })
+}
+
+const uncreateGlobalShortcut = () => {
+    globalShortcut.unregister(config.shortcuts.resync_and_copy)
+    globalShortcut.unregisterAll()
 }
 
 const createTray = () => {
