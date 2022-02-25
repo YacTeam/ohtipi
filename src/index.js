@@ -201,17 +201,18 @@ const buildContextMenu = (opts = {
     },
     ...buildOTPHistorySubMenu(),
     {
+        label: config.text.resync,
+        enabled: hasAcceptableSystemPermissions,
+        accelerator: prefStore.get('disable-shortcuts') ? undefined : config.shortcuts.resync_and_copy,
+        registerAccelerator: false,
+        toolTip: config.text.resync_and_copy_tooltip,
+        click: () => {
+            resyncMessages();
+        }
+    },
+    {
         submenu: [
-            {
-                label: config.text.resync,
-                enabled: hasAcceptableSystemPermissions,
-                accelerator: prefStore.get('disable-shortcuts') ? undefined : config.shortcuts.resync_and_copy,
-                registerAccelerator: false,
-                toolTip: config.text.resync_and_copy_tooltip,
-                click: () => {
-                    resyncMessages();
-                }
-            },
+
             {
                 label: config.text.disable_shortcuts,
                 toolTip: config.text.disable_shortcuts_tooltip,
