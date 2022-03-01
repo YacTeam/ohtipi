@@ -2,6 +2,9 @@
 
 module.exports = [
   'td ameritrade',
+  'coinbase',
+  'ally',
+  'schwab',
   'id.me',
   'bofa',
   'dropboxing',
@@ -58,6 +61,7 @@ module.exports = [
   'ebay',
   'intel',
   'cisco',
+  'citizen',
   'oracle',
   'xerox',
   'ibm',
@@ -101,5 +105,10 @@ module.exports = [
   'robinhood',
   'ao retail',
   'cater allen',
-  'apple pay'
+  'apple pay',
+  'bill.com',
+  'amex',
+  'sia',
+  'fanduel',
+  'carta'
 ]

@@ -2,10 +2,10 @@
   "name": "ohtipi",
   "productName": "Ohtipi",
   "description": "iMessage OTP",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "author": "Alec Armbruster <alec@yac.com>",
   "copyright": "© 2022, Yac Inc.",
-  "homepage": "http://ohtipi.com",
+  "homepage": "https://ohtipi.com",
   "license": "MIT",
   "main": "index.js",
   "scripts": {
