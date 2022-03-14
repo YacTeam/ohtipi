@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*! @brief Constant that shows library version
  */
-static NSString * const SCLibraryVersion = @"1.6.2";
+static NSString * const SCLibraryVersion = @"1.6.6";
 
 #pragma mark - Request authorization code
 
@@ -110,9 +110,11 @@ typedef NS_ENUM(NSInteger, SCUserEmailSharingResponse)
 FOUNDATION_EXTERN SCUserEmailSharingResponse SCGetLastUserEmailSharingResponse(void);
 
 /*! @brief Shows the dialog that offers sharing an email address
+ *  @discussion Although you should call this method when it makes sense in the user experience flow of your app, the actual display of an email sharing dialog is governed by Setapp policy.
+ *  For example, the dialog won't show if user has already shared the email or one was recently shown and user selected "later" option.
+ *  Each time user selects "later" option, the presentation cooldown increases (up to one mounth).
  *  @param completionHandler Completion block with the user’s response as an input param.
- *  @returns YES if the dialog is shown. If the user has already been asked to share an email,
- *              the dialog won't be shown, and the function returns NO.
+ *  @returns YES if the dialog was shown. Otherwise returns NO.
  */
 FOUNDATION_EXTERN BOOL SCAskUserToShareEmail(void (^_Nullable completionHandler)(SCUserEmailSharingResponse userResponse));
 

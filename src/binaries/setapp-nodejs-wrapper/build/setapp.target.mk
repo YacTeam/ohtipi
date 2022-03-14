@@ -149,7 +149,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%.o: $(obj)/%.mm FORCE_DO_CMD
 # End of this set of suffix rules
 ### Rules for final target.
 LDFLAGS_Debug := \
-	-force_load  /Users/alec/Desktop/repos/ohtipi-main/src/binaries/setapp-nodejs-wrapper/libSetapp/libSetapp.a -framework Security -framework IOKit -framework QuartzCore -framework Cocoa \
+	-force_load  /Users/alec/Desktop/projects/repos/ohtipi-main/src/binaries/setapp-nodejs-wrapper/libSetapp/libSetapp.a -framework Security -framework IOKit -framework QuartzCore -framework Cocoa \
 	-undefined dynamic_lookup \
 	-Wl,-no_pie \
 	-Wl,-search_paths_first \
@@ -159,13 +159,13 @@ LDFLAGS_Debug := \
 	-stdlib=libc++
 
 LIBTOOLFLAGS_Debug := \
-	-force_load  /Users/alec/Desktop/repos/ohtipi-main/src/binaries/setapp-nodejs-wrapper/libSetapp/libSetapp.a -framework Security -framework IOKit -framework QuartzCore -framework Cocoa \
+	-force_load  /Users/alec/Desktop/projects/repos/ohtipi-main/src/binaries/setapp-nodejs-wrapper/libSetapp/libSetapp.a -framework Security -framework IOKit -framework QuartzCore -framework Cocoa \
 	-undefined dynamic_lookup \
 	-Wl,-no_pie \
 	-Wl,-search_paths_first
 
 LDFLAGS_Release := \
-	-force_load  /Users/alec/Desktop/repos/ohtipi-main/src/binaries/setapp-nodejs-wrapper/libSetapp/libSetapp.a -framework Security -framework IOKit -framework QuartzCore -framework Cocoa \
+	-force_load  /Users/alec/Desktop/projects/repos/ohtipi-main/src/binaries/setapp-nodejs-wrapper/libSetapp/libSetapp.a -framework Security -framework IOKit -framework QuartzCore -framework Cocoa \
 	-undefined dynamic_lookup \
 	-Wl,-no_pie \
 	-Wl,-search_paths_first \
@@ -175,7 +175,7 @@ LDFLAGS_Release := \
 	-stdlib=libc++
 
 LIBTOOLFLAGS_Release := \
-	-force_load  /Users/alec/Desktop/repos/ohtipi-main/src/binaries/setapp-nodejs-wrapper/libSetapp/libSetapp.a -framework Security -framework IOKit -framework QuartzCore -framework Cocoa \
+	-force_load  /Users/alec/Desktop/projects/repos/ohtipi-main/src/binaries/setapp-nodejs-wrapper/libSetapp/libSetapp.a -framework Security -framework IOKit -framework QuartzCore -framework Cocoa \
 	-undefined dynamic_lookup \
 	-Wl,-no_pie \
 	-Wl,-search_paths_first

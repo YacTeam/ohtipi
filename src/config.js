@@ -4,7 +4,7 @@ module.exports = {
         debug: false
     },
     build: {
-        setApp: false,
+        setApp: true,
         universal: false
     },
     shortcuts: {
