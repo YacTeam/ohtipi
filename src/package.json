@@ -19,6 +19,7 @@
     "build-setapp-arm64": "electron-builder --config ./build/electron.arm64.config.js --mac --arm64 -p never",
     "build-setapp-x64": "electron-builder --config ./build/electron.x64.config.js --mac --x64 -p never",
     "build-universal": "node ./build/build-universal.js",
+    "setapp-notarize": "node ./build/setapp-notarize.js",
     "rebuild-arm64": "./node_modules/.bin/electron-rebuild --arch=arm64",
     "rebuild-x64": "./node_modules/.bin/electron-rebuild --arch=x64"
   },

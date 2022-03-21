@@ -34,4 +34,13 @@ echo "Done building x64!";
 # universal steps (intel/arm64 mac)
 echo "Building universal app...";
 npm run build-universal;
-echo "Done building universal app!"
+
+echo "Codesigning universal app...";
+# you may need to change the cert profile identifier signature
+# note: must use hardened runtime option
+codesign -fv --deep -s CBA966CA6CC43CD196A9372C0AE024B0D839A4E5 ./dist/mac-universal/Ohtipi.app --options runtime --entitlements ./build/entitlements.mac.plist;
+
+echo "Notarizing universal app...";
+npm run setapp-notarize;
+
+echo "Universal app is ready for distribution!";
